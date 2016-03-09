@@ -1,0 +1,10 @@
+os:
+  - linux
+language: rust
+rust:
+# - beta
+  - stable
+  - nightly
+  branches:
+  only:
+    - master
