@@ -1,6 +1,7 @@
 os:
   - linux
 language: rust
+sudo: false
 rust:
 # - beta
   - stable
@@ -8,3 +9,6 @@ rust:
   branches:
   only:
     - master
+script:
+  - |
+      travis-cargo build
