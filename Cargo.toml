@@ -1,0 +1,28 @@
+[package]
+authors = ["Safe Exchange Developers <team@safex.io>"]
+description = "Decentralized Marketplace - Cryptographic object creation for trade."
+documentation = "http://safex.io/safex/latest"
+homepage = "http://safex.io"
+license = "GPL-3.0"
+name = "safex"
+readme = "README.md"
+repository = "https://github.com/safex/safex"
+version = "0.1.0"
+
+
+[lib]
+name = "safex"
+src = "src/lib.rs"
+
+
+[dependencies]
+rust-crypto = "0.2"
+rand = "0.3"
+rustc-serialize = "0.3"
+
+[dependencies.secp256k1]
+git = "https://github.com/safex/rust-secp256k1"
+
+[[example]]
+name = "generate_keys"
+path = "examples/generate_keys.rs"
