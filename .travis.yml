@@ -1,15 +1,1 @@
-os:
-  - linux
 language: rust
-sudo: false
-rust:
-# - beta
-  - stable
-  - nightly
-  branches:
-  only:
-    - master
-install:
-  - git clone https://github.com/safex/safex.git
-  - cd safex
-  - cargo build
