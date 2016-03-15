@@ -1,0 +1,30 @@
+
+[package]
+name = "bitcoin"
+version = "0.5.4"
+authors = ["Andrew Poelstra <apoelstra@wpsoftware.net>"]
+license = "CC0-1.0"
+homepage = "https://github.com/dallyshalla/rust-bitcoin/"
+repository = "https://github.com/dallyshalla/rust-bitcoin/"
+documentation = "https://www.wpsoftware.net/rustdoc/bitcoin/"
+description = "General purpose library for using and interoperating with Bitcoin and other cryptocurrencies."
+keywords = [ "crypto", "bitcoin" ]
+readme = "README.md"
+
+[lib]
+name = "bitcoin"
+path = "src/lib.rs"
+
+[dependencies]
+byteorder = "0.3"
+jsonrpc = "0.7" # for serde macros
+num = "0.1"
+num_cpus = "0.2"
+rand = "0.3"
+rust-crypto = "0.2"
+rustc-serialize = "0.3"
+secp256k1 = "0.5"
+serde = "0.6"
+strason = "0.3"
+time = "0.1"
+

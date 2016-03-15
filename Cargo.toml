@@ -19,6 +19,9 @@ src = "src/lib.rs"
 rust-crypto = "0.2"
 rand = "0.3"
 rustc-serialize = "0.3"
+lazy_static = "0.1"
+byteorder = "0.3"
+bitcoin = { path = "bitcoin" }
 
 [dependencies.secp256k1]
 git = "https://github.com/safex/rust-secp256k1"

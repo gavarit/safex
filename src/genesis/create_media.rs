@@ -1,0 +1,1 @@
+//! Definies the methods for forming a cryptographic media for use in the safex protocol
