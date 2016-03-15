@@ -1,11 +1,6 @@
 extern crate safex;
 extern crate rustc_serialize;
 
-extern crate bitcoin;
-
-use std::str;
-use rustc_serialize::hex::FromHex;
-
 
 use safex::genesis::key_generation::KeyPair;
 
@@ -27,5 +22,5 @@ fn main() {
 	print!("your Hash160 Public Key: {:?} \n", the_string);
 
 
-	
+
 }
