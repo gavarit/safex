@@ -15,6 +15,8 @@ lazy_static! {
 	static ref SECP256K1: Secp256k1 = Secp256k1::new();
 }
 
+pub type Signature = String;
+
 
 #[derive(Debug)]
 pub enum KeyError {
@@ -109,26 +111,11 @@ impl KeyPair {
 
 /// EC functions
 pub mod ec {
-/*
-
-	/// Recovers Public key from signed message hash.
-	pub fn recover(signature: &Signature, message: &H256) -> PublicKey {
-		use secp256k1::*;
-		let context = &crypto::SECP256K1;
-		let rsig = try!(RecoverableSignature::from_compact(context, &signature[0..64], try!(RecoveryId::from_i32(signature[64] as i32))));
-		let publ = try!(context.recover(&try!(Message::from_slice(&message)), &rsig));
-		let serialized = publ.serialize_vec(context, false);
-		let p: Public = Public::from_slice(&serialized[1..65]);
-		//TODO: check if it's the zero key and fail if so.
-		Ok(p)
-	}
-
-
-	/// Returns siganture of message hash.
-	pub fn sign(secret: &Secret, message: &H256) -> Result<Signature, CryptoError> {
+/*	/// Returns siganture of message hash.
+	pub fn sign(secret: &SecretKey, message: &H256) -> Result<Signature, CryptoError> {
 		// TODO: allow creation of only low-s signatures.
 		use secp256k1::*;
-		let context = &crypto::SECP256K1;
+		let context = &key_generation::SECP256K1;
 		let sec: &key::SecretKey = unsafe { ::std::mem::transmute(secret) };
 		let s = try!(context.sign_recoverable(&try!(Message::from_slice(&message)), sec));
 		let (rec_id, data) = s.serialize_compact(context);
@@ -143,6 +130,21 @@ pub mod ec {
 		}
 		Ok(signature)
 	}
+
+	/// Recovers Public key from signed message hash.
+	pub fn recover(signature: &Signature, message: &H256) -> PublicKey {
+		use secp256k1::*;
+		let context = &crypto::SECP256K1;
+		let rsig = try!(RecoverableSignature::from_compact(context, &signature[0..64], try!(RecoveryId::from_i32(signature[64] as i32))));
+		let publ = try!(context.recover(&try!(Message::from_slice(&message)), &rsig));
+		let serialized = publ.serialize_vec(context, false);
+		let p: Public = Public::from_slice(&serialized[1..65]);
+		//TODO: check if it's the zero key and fail if so.
+		Ok(p)
+	}
+
+
+
 
 
 	/// Verify signature.
@@ -175,3 +177,22 @@ pub mod ec {
 
     (sk, pk)
 }*/
+
+#[test]
+fn test() {
+	let our_key = KeyPair::create().ok().expect("error");
+	
+	let the_secret = KeyPair::private_key_tobase64(our_key.secret);
+	print!("your base64 private key {:?} \n", the_secret);
+
+	let the_string = KeyPair::address_base58(our_key.public);
+	print!("your Hash160 Public Key: {:?} \n", the_string);
+
+
+	let the_keys = KeyPair::from_secret(our_key.secret).unwrap();
+	let the_secret = KeyPair::private_key_tobase64(the_keys.secret);
+	print!("your base64 private key {:?} \n", the_secret);
+
+	let the_string = KeyPair::address_base58(the_keys.public);
+	print!("your Hash160 Public Key: {:?} \n", the_string);
+}
