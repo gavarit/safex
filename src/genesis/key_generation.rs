@@ -54,18 +54,15 @@ pub struct KeyPair {
 
 impl KeyPair {
 	//get the public key from the secret - import a secretkey get a KeyPair object
-	/*pub fn from_secret(secret: SecretKey) -> KeyResult {
+	pub fn from_secret(secret: SecretKey) -> KeyResult {
 		let context = &SECP256K1;
-
-		let s: SecretKey = try!(SecretKey::from_slice(context, &secret));
-		let pub_key = try!(PublicKey::from_secret_key(context, &s));
-		let serialized = pub_key.serialize_vec(context, false);
-		let p = utils::hash::Hash160::from_data(&serialized[1..65]);
+		let s: key::SecretKey = secret;
+		let pub_key = try!(key::PublicKey::from_secret_key(context, &s));
 		Ok(KeyPair {
-			public: p,
-			secret: secret
+			secret: secret,
+			public: pub_key,
 		})
-	}*/
+	}
 	//make a new random keypair
 	pub fn create() -> KeyResult {
 		let context = &SECP256K1;
@@ -79,7 +76,7 @@ impl KeyPair {
 		};
 		Ok(out_keys)
 	}
-
+	//convert secret key to base64 for ready import to wallets
 	pub fn private_key_tobase64(secret: SecretKey) -> String {
 		let mut format_sk = format!("{:?}", secret);
     	let string_len = format_sk.len() - 1;
@@ -90,7 +87,7 @@ impl KeyPair {
     	let sec_key_base64 = format_sk.from_hex().ok().expect("error converting secret to base64").to_base64(STANDARD);
     	sec_key_base64
 	}
-
+	//extract a bitcoin valid address in base58
 	pub fn address_base58(public: PublicKey) -> String {
 		let context = &SECP256K1;
 		let the_addr = Address { 
@@ -112,10 +109,10 @@ impl KeyPair {
 
 /// EC functions
 pub mod ec {
-
 /*
+
 	/// Recovers Public key from signed message hash.
-	pub fn recover(signature: &Signature, message: &H256) -> Result<Public, CryptoError> {
+	pub fn recover(signature: &Signature, message: &H256) -> PublicKey {
 		use secp256k1::*;
 		let context = &crypto::SECP256K1;
 		let rsig = try!(RecoverableSignature::from_compact(context, &signature[0..64], try!(RecoveryId::from_i32(signature[64] as i32))));
