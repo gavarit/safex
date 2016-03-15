@@ -1,0 +1,1 @@
+//! Definies the methods for forming a cryptographic item for use in the safex protocol
