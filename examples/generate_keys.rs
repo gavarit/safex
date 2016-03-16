@@ -32,7 +32,12 @@ fn main() {
 	//let this_strings = "hello".to_string();
 
 	let mut this_vec: Vec<u8> = Vec::new();
-	this_vec.push(0);
-	KeyPair::sign(&the_keys.secret, this_vec);
+	this_vec.push(099999);
+	let our_signature = KeyPair::sign(&the_keys.secret, this_vec);
 
+	let mut this_vec: Vec<u8> = Vec::new();
+	this_vec.push(099999);
+	let extract_pub = KeyPair::recover(our_signature, this_vec);
+	let the_string = KeyPair::address_base58(extract_pub);
+	print!("your Hash160 Public Key: {:?} \n", the_string);
 }
