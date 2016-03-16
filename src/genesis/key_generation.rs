@@ -1,8 +1,10 @@
 use rustc_serialize::base64::{self, ToBase64, STANDARD};
 use rustc_serialize::hex::FromHex;
 
+
 use secp256k1::{key, Secp256k1};
 use secp256k1::key::{SecretKey, PublicKey};
+//use secp256k1::Signature::from_der;
 
 use rand::os::OsRng;
 
@@ -10,12 +12,13 @@ use bitcoin::util::hash::Hash160;
 use bitcoin::util::address::Address;
 use bitcoin::network::constants::Network::Bitcoin;
 use bitcoin::util::address::Type::PubkeyHash;
+use bitcoin::util::hash::Sha256dHash;
 
 lazy_static! {
 	static ref SECP256K1: Secp256k1 = Secp256k1::new();
 }
 
-pub type Signature = String;
+pub type Sig = String;
 
 
 #[derive(Debug)]
@@ -112,77 +115,25 @@ impl KeyPair {
 	}
 	//pub fn publick_key(&self) -> &
 
-}
-
-
-/// EC functions
-pub mod ec {
-/*	/// Returns siganture of message hash.
-	pub fn sign(secret: &SecretKey, message: &[u8]) -> Result<Signature, CryptoError> {
-		// TODO: allow creation of only low-s signatures.
+	pub fn sign(secret: &SecretKey, message: Vec<u8>) {
 		use secp256k1::*;
-		let context = &key_generation::SECP256K1;
+		let context = &SECP256K1;
 		let sec: &key::SecretKey = unsafe { ::std::mem::transmute(secret) };
-		let s = try!(context.sign_recoverable(&try!(Message::from_slice(&message)), sec));
+		let signature_hash = Sha256dHash::from_data(&message[..]);
+		let msg = Message::from_slice(&signature_hash[..]).unwrap();
+
+		let s = context.sign_recoverable(&msg, sec).unwrap();
 		let (rec_id, data) = s.serialize_compact(context);
-		let mut signature: crypto::Signature = unsafe { ::std::mem::uninitialized() };
-		signature.clone_from_slice(&data);
-		signature[64] = rec_id.to_i32() as u8;
+		let th_sdata = Sha256dHash::from_data(&data[..]);
+		println!("{:?}", th_sdata);
+		//let mut signature = unsafe { ::std::mem::uninitialized() };
+		//signature.clone_from_slice(&data);
+		//signature[64] = rec_id.to_i32() as u8;
+		//let signature_hash = &Sha256dHash::from_data(&message[..]);
 
-		let (_, s, v) = signature.to_rsv();
-		let secp256k1n = U256::from_str("fffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141").unwrap();
-		if !is_low_s(&s) {
-			signature = super::Signature::from_rsv(&H256::from_slice(&signature[0..32]), &H256::from(secp256k1n - s), v ^ 1);
-		}
-		Ok(signature)
 	}
-
-	/// Recovers Public key from signed message hash.
-	pub fn recover(signature: &Signature, message: &H256) -> PublicKey {
-		use secp256k1::*;
-		let context = &crypto::SECP256K1;
-		let rsig = try!(RecoverableSignature::from_compact(context, &signature[0..64], try!(RecoveryId::from_i32(signature[64] as i32))));
-		let publ = try!(context.recover(&try!(Message::from_slice(&message)), &rsig));
-		let serialized = publ.serialize_vec(context, false);
-		let p: Public = Public::from_slice(&serialized[1..65]);
-		//TODO: check if it's the zero key and fail if so.
-		Ok(p)
-	}
-
-
-
-
-
-	/// Verify signature.
-	pub fn verify(public: &Public, signature: &Signature, message: &H256) -> Result<bool, CryptoError> {
-		use secp256k1::*;
-		let context = &crypto::SECP256K1;
-		let rsig = try!(RecoverableSignature::from_compact(context, &signature[0..64], try!(RecoveryId::from_i32(signature[64] as i32))));
-		let sig = rsig.to_standard(context);
-
-		let mut pdata: [u8; 65] = [4u8; 65];
-		let ptr = pdata[1..].as_mut_ptr();
-		let src = public.as_ptr();
-		unsafe { ::std::ptr::copy_nonoverlapping(src, ptr, 64) };
-		let publ = try!(key::PublicKey::from_slice(context, &pdata));
-		match context.verify(&try!(Message::from_slice(&message)), &sig, &publ) {
-			Ok(_) => Ok(true),
-			Err(Error::IncorrectSignature) => Ok(false),
-			Err(x) => Err(<CryptoError as From<Error>>::from(x))
-		}
-*/
-
 }
 
-/*pub fn generate_keypair() -> (SecretKey, PublicKey) {
-
-	let mut secp = Secp256k1::new();
-    secp.randomize(&mut thread_rng());
-
-    let (sk, pk) = secp.generate_keypair(&mut thread_rng()).ok().expect("error generating keys");
-
-    (sk, pk)
-}*/
 
 #[test]
 fn test() {
@@ -201,4 +152,9 @@ fn test() {
 
 	let the_string = KeyPair::address_base58(the_keys.public);
 	print!("your Hash160 Public Key: {:?} \n", the_string);
+	let this_strings = "hello".to_string();
+
+	let mut this_vec: Vec<u8> = Vec::new();
+	this_vec.push(0);
+	KeyPair::sign(&the_keys.secret, this_vec);
 }
