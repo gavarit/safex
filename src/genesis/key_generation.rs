@@ -102,8 +102,14 @@ impl KeyPair {
   		return_this
 	}
 
-	//returns the public key
-	//returns private key
+	/// Returns public key
+	pub fn public(&self) -> &PublicKey {
+		&self.public
+	}
+	/// Returns private key
+	pub fn secret(&self) -> &SecretKey {
+		&self.secret
+	}
 	//pub fn publick_key(&self) -> &
 
 }
@@ -112,7 +118,7 @@ impl KeyPair {
 /// EC functions
 pub mod ec {
 /*	/// Returns siganture of message hash.
-	pub fn sign(secret: &SecretKey, message: &H256) -> Result<Signature, CryptoError> {
+	pub fn sign(secret: &SecretKey, message: &[u8]) -> Result<Signature, CryptoError> {
 		// TODO: allow creation of only low-s signatures.
 		use secp256k1::*;
 		let context = &key_generation::SECP256K1;
