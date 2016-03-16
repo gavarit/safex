@@ -6,7 +6,9 @@ use secp256k1::key::{SecretKey, PublicKey};
 use rand::{thread_rng};
 
 
+use genesis::key_generation::KeyPair;
 
+//every alias gets a keypair
 
 struct Account {
 	identities: Vec<Alias>,
@@ -24,28 +26,12 @@ impl Account {
 
 struct Alias {
 	name: String,
-	keys: Vec<Keys>,
+	keys: Vec<KeyPair>,
 
 }
 
 
 
-
-
-
-
-struct Keys {
-	name: String,
-	pub_key: PublicKey,
-	sec_key: SecretKey,
-}
-
-
-impl Keys {
-	/*fn generate_keys() -> Keys {
-		
-	}*/
-}
 
 
 
