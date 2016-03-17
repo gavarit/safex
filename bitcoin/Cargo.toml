@@ -28,4 +28,4 @@ strason = "0.3"
 time = "0.1"
 
 [dependencies.secp256k1]
-git = "https://github.com/safex/rust-secp256k1"
+git = "https://github.com/gavarit/rust-secp256k1"
