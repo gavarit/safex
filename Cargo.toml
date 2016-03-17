@@ -24,7 +24,7 @@ byteorder = "0.3"
 bitcoin = { path = "bitcoin" }
 
 [dependencies.secp256k1]
-git = "https://github.com/safex/rust-secp256k1"
+git = "https://github.com/gavarit/rust-secp256k1"
 
 [[example]]
 name = "generate_keys"
