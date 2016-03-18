@@ -115,7 +115,7 @@ impl KeyPair {
 	}
 	//pub fn publick_key(&self) -> &
 
-	pub fn sign(secret: &SecretKey, message: Vec<u8>) {
+	pub fn sign(secret: &SecretKey, message: Vec<u8>) -> Vec<u8> {
 		use secp256k1::*;
 		let context = &SECP256K1;
 		let sec: &key::SecretKey = unsafe { ::std::mem::transmute(secret) };
@@ -124,14 +124,39 @@ impl KeyPair {
 
 		let s = context.sign_recoverable(&msg, sec).unwrap();
 		let (rec_id, data) = s.serialize_compact(context);
-		let th_sdata = Sha256dHash::from_data(&data[..]);
-		println!("{:?}", th_sdata);
+		let mut signature: Vec<u8> = Vec::new();
+		for a in data.iter() {
+
+			signature.push(*a);
+		}
+		signature.push(rec_id.to_i32() as u8);
+
+
+		let signature_hash = Sha256dHash::from_data(&signature[..]);
+
+		println!("{:?}", signature_hash);
+		signature
 		//let mut signature = unsafe { ::std::mem::uninitialized() };
 		//signature.clone_from_slice(&data);
 		//signature[64] = rec_id.to_i32() as u8;
 		//let signature_hash = &Sha256dHash::from_data(&message[..]);
 
 	}
+
+	/// Recovers Public key from signed message hash.
+	pub fn recover(signature: Vec<u8>, message: Vec<u8>) -> PublicKey {
+		use secp256k1::*;
+		let context = &SECP256K1;
+		let signature_hash = Sha256dHash::from_data(&message[..]);
+		let msg = Message::from_slice(&signature_hash[..]).unwrap();
+		let rsig = RecoverableSignature::from_compact(context, &signature[0..64], RecoveryId::from_i32(signature[64] as i32).unwrap()).unwrap();
+		let publ: PublicKey = context.recover(&msg, &rsig).unwrap();
+		//let serialized = publ.serialize_vec(context, false);
+		//let p: Public = Public::from_slice(&serialized[1..65]);
+		//TODO: check if it's the zero key and fail if so.
+		publ
+	}
+
 }
 
 
@@ -155,6 +180,12 @@ fn test() {
 	let this_strings = "hello".to_string();
 
 	let mut this_vec: Vec<u8> = Vec::new();
-	this_vec.push(0);
-	KeyPair::sign(&the_keys.secret, this_vec);
+	this_vec.push(099999);
+	let our_signature = KeyPair::sign(&the_keys.secret, this_vec);
+
+	let mut this_vec: Vec<u8> = Vec::new();
+	this_vec.push(099999);
+	let extract_pub = KeyPair::recover(our_signature, this_vec);
+	let the_string = KeyPair::address_base58(extract_pub);
+	print!("your Hash160 Public Key: {:?} \n", the_string);
 }
