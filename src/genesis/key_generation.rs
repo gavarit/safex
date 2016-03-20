@@ -97,10 +97,10 @@ impl KeyPair {
 		let from_base = secret.from_base64().ok().expect("something wrong");
 		let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
 		let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
-		KeyPair {
+		Ok(KeyPair {
 			secret: the_secret,
 			public: pub_key,
-		}
+		})
 	}
 	///extract a bitcoin valid address in base58
 	pub fn address_base58(public: &PublicKey) -> String {
