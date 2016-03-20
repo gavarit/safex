@@ -57,17 +57,6 @@ pub struct KeyPair {
 
 
 impl KeyPair {
-	///keypair from base64 secret key
-	pub fn keypair_frombase64(secret: String) -> KeyPair {
-		let context = &SECP256K1;
-		let from_base = secret.from_base64().ok().expect("something wrong");
-		let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
-		let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
-		KeyPair {
-			secret: the_secret,
-			public: pub_key,
-		}
-	}
 	///get the public key from the secret - import a secretkey get a KeyPair object
 	pub fn from_secret(secret: SecretKey) -> KeyResult {
 		let context = &SECP256K1;
@@ -102,7 +91,18 @@ impl KeyPair {
     	let sec_key_base64 = format_sk.from_hex().ok().expect("error converting secret to base64").to_base64(STANDARD);
     	sec_key_base64
 	}
-	//extract a bitcoin valid address in base58
+	///keypair from base64 secret key
+	pub fn keypair_frombase64(secret: String) -> KeyPair {
+		let context = &SECP256K1;
+		let from_base = secret.from_base64().ok().expect("something wrong");
+		let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
+		let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
+		KeyPair {
+			secret: the_secret,
+			public: pub_key,
+		}
+	}
+	///extract a bitcoin valid address in base58
 	pub fn address_base58(public: &PublicKey) -> String {
 		let context = &SECP256K1;
 		let the_addr = Address { 
@@ -177,6 +177,18 @@ impl KeyPair {
 	}
 }
 
+//temporary
+///keypair from base64 secret key
+pub fn keypair_frombase64(secret: String) -> KeyPair {
+	let context = &SECP256K1;
+	let from_base = secret.from_base64().ok().expect("something wrong");
+	let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
+	let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
+	KeyPair {
+		secret: the_secret,
+		public: pub_key,
+	}
+}
 
 #[test]
 fn test() {
