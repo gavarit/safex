@@ -92,15 +92,15 @@ impl KeyPair {
     	sec_key_base64
 	}
 	///keypair from base64 secret key
-	pub fn keypair_frombase64(secret: String) -> KeyResult {
+	pub fn keypair_frombase64(secret: String) -> KeyPair {
 		let context = &SECP256K1;
 		let from_base = secret.from_base64().ok().expect("something wrong");
 		let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
 		let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
-		Ok(KeyPair {
+		KeyPair {
 			secret: the_secret,
 			public: pub_key,
-		})
+		}
 	}
 	///extract a bitcoin valid address in base58
 	pub fn address_base58(public: &PublicKey) -> String {
