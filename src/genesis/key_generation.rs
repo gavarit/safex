@@ -92,7 +92,7 @@ impl KeyPair {
     	sec_key_base64
 	}
 	///keypair from base64 secret key
-	pub fn keypair_frombase64(secret: String) -> KeyPair {
+	pub fn keypair_frombase64(secret: String) -> KeyResult {
 		let context = &SECP256K1;
 		let from_base = secret.from_base64().ok().expect("something wrong");
 		let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
@@ -177,18 +177,6 @@ impl KeyPair {
 	}
 }
 
-//temporary
-///keypair from base64 secret key
-pub fn keypair_frombase64(secret: String) -> KeyPair {
-	let context = &SECP256K1;
-	let from_base = secret.from_base64().ok().expect("something wrong");
-	let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
-	let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
-	KeyPair {
-		secret: the_secret,
-		public: pub_key,
-	}
-}
 
 #[test]
 fn test() {
