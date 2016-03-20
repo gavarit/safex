@@ -1,5 +1,5 @@
-use rustc_serialize::base64::{self, ToBase64, STANDARD};
-use rustc_serialize::hex::FromHex;
+use rustc_serialize::base64::{self, ToBase64, FromBase64, STANDARD};
+use rustc_serialize::hex::{ToHex, FromHex};
 
 
 use secp256k1::{key, Secp256k1};
@@ -57,7 +57,18 @@ pub struct KeyPair {
 
 
 impl KeyPair {
-	//get the public key from the secret - import a secretkey get a KeyPair object
+	///keypair from base64 secret key
+	pub fn keypair_frombase64(secret: String) -> KeyPair {
+		let context = &SECP256K1;
+		let from_base = secret.from_base64().ok().expect("something wrong");
+		let the_secret = SecretKey::from_slice(context, &from_base[..]).unwrap();
+		let pub_key = key::PublicKey::from_secret_key(context, &the_secret).unwrap();
+		KeyPair {
+			secret: the_secret,
+			public: pub_key,
+		}
+	}
+	///get the public key from the secret - import a secretkey get a KeyPair object
 	pub fn from_secret(secret: SecretKey) -> KeyResult {
 		let context = &SECP256K1;
 		let s: key::SecretKey = secret;
@@ -67,7 +78,7 @@ impl KeyPair {
 			public: pub_key,
 		})
 	}
-	//make a new random keypair
+	///make a new random keypair
 	pub fn create() -> KeyResult {
 		let context = &SECP256K1;
 		let mut rng = try!(OsRng::new());
@@ -80,7 +91,7 @@ impl KeyPair {
 		};
 		Ok(out_keys)
 	}
-	//convert secret key to base64 for ready import to wallets
+	///convert secret key to base64 for ready import to wallets
 	pub fn private_key_tobase64(secret: SecretKey) -> String {
 		let mut format_sk = format!("{:?}", secret);
     	let string_len = format_sk.len() - 1;
@@ -205,4 +216,17 @@ fn test() {
 	this_vec.push(099999);
 	let verified = KeyPair::verify(&extract_pub, our_signature,this_vec);
 	print!("Verification status: {:?}\n", verified);
+
+	let our_key = KeyPair::create().ok().expect("error");
+	
+	let the_secret = KeyPair::private_key_tobase64(our_key.secret);
+	print!("your base64 private key {:?} \n", the_secret);
+
+	let the_string = KeyPair::address_base58(&our_key.public);
+	print!("your Hash160 Public Key: {:?} \n", the_string);
+
+	let the_newkeys = KeyPair::keypair_frombase64(the_secret);
+
+	let the_string2 = KeyPair::address_base58(&the_newkeys.public);
+	assert_eq!(the_string, the_string2);
 }
