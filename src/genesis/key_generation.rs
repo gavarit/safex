@@ -142,8 +142,6 @@ impl KeyPair {
 		}
 		signature.push(rec_id.to_i32() as u8);
 		let signature_hash = Sha256dHash::from_data(&signature[..]);
-
-		println!("{:?}", signature_hash);
 		signature
 
 	}
