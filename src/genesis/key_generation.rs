@@ -104,7 +104,7 @@ impl KeyPair {
 	}
 	///extract a bitcoin valid address in base58
 	pub fn address_base58(public: &PublicKey) -> String {
-		let context = &SECP256K1;
+		let context = Secp256k1::without_caps();
 		let the_addr = Address { 
       		ty: PubkeyHash, 
       		network: Bitcoin, 
