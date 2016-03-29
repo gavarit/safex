@@ -1,4 +1,4 @@
 //transaction and script usage
 
 
-use bitcoin::blockdata::transaction{TxIn, TxOut};
+use bitcoin::blockdata::transaction::{TxIn, TxOut};
