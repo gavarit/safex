@@ -13,6 +13,7 @@ use bitcoin::util::address::Address;
 use bitcoin::network::constants::Network::Bitcoin;
 use bitcoin::util::address::Type::PubkeyHash;
 use bitcoin::util::hash::Sha256dHash;
+use bitcoin::util::base58::base58_encode_slice;
 
 lazy_static! {
 	static ref SECP256K1: Secp256k1 = Secp256k1::new();
@@ -79,6 +80,30 @@ impl KeyPair {
 			secret: s,
 		};
 		Ok(out_keys)
+	}
+	///convert secret key to base64 for ready import to wallets
+	pub fn private_key_towif(secret: SecretKey) -> String {
+		let mut format_sk = format!("{:?}", secret);
+    	let string_len = format_sk.len() - 1;
+    	format_sk.remove(string_len);
+    	for i in 0..10 {
+        	format_sk.remove(0);
+    	}
+    	let lead_bytestr = "80".to_string() + &format_sk;
+    	let lead_copy = lead_bytestr.clone();
+		let wif_hash = Sha256dHash::from_data(&lead_bytestr.into_bytes());
+		let wif_str = wif_hash;
+		let mut check = String::new();
+		for x in 0..8 {
+			check.push(wif_str[x as usize] as char);
+		}
+		let step_5 = lead_copy + &check;
+		let the_wif = base58_encode_slice(step_5.as_bytes());
+		the_wif
+    	//let sec_key_base64 = format_sk.from_hex().ok().expect("error converting secret to base64").to_base64(STANDARD);
+    	//sec_key_base64
+
+    	//figure out how to use this with the wif process base58_encode_slice 
 	}
 	///convert secret key to base64 for ready import to wallets
 	pub fn private_key_tobase64(secret: SecretKey) -> String {
