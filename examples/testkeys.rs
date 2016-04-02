@@ -56,4 +56,13 @@ fn main() {
 
 	let the_string = KeyPair::address_base58(&the_newkeys.public);
 	print!("your Hash160 Public Key: {:?} \n", the_string);
+
+	let our_key = KeyPair::create().ok().expect("error");
+	
+	let the_secret = KeyPair::private_key_towif(our_key.secret);
+	print!("your wif private key {:?} \n", the_secret);
+
+
+	let our_key = KeyPair::create().ok().expect("error");
+	println!("{:?}", our_key.secret);
 }

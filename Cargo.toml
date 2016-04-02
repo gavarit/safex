@@ -27,5 +27,13 @@ bitcoin = { path = "bitcoin" }
 git = "https://github.com/safex/rust-secp256k1"
 
 [[example]]
-name = "generate_keys"
-path = "examples/generate_keys.rs"
+name = "testkeys"
+path = "examples/testkeys.rs"
+
+[[example]]
+name = "import"
+path = "examples/import.rs"
+
+[[example]]
+name = "keys"
+path = "examples/keys.rs"
